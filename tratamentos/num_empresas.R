@@ -28,7 +28,7 @@ df_idosos <- df %>%
   filter(
     status_associado=="ATIVO", 
     `Mais de 60`>=50) %>% 
-  distinct()3014+
+  distinct()#3014+
   
   df_idosos %>% vitaltable::tab_1(predominancia)
 

@@ -1,7 +1,8 @@
 source('global.R')
 source('auxiliares/municipios_sicredi.R')
 
-df_08 <- readxl::read_excel('dados/r20250819_silver_associados_pj.xlsx') %>% distinct()
+df_08 <- dbGetQuery(con,
+                    "SELECT * FROM sicredi_silver_t")
 
 df_08_final <- df_08 |> 
   group_by(municipio_y) |> 
@@ -22,27 +23,5 @@ df_08_final <- df_08 |>
   ungroup() |> 
   filter(
     freq_mu >= 10
-  ) |> 
-  mutate(
-    sexo_final = case_when(
-      `F` == 50 ~ "Ambos",
-      `F` >50 ~"Feminino",
-      `F` <50 ~"Masculino",
-      TRUE~"Ignorado"
-    ),
-    
-    predominancia = case_when(
-      `Mais de 60` >= 50 & `F`==50 ~ "Ambiguo - Idosos",
-      `Mais de 60` >= 50 & `F`>=51 ~ "Mulheres idosas",
-      `Mais de 60` >= 50 & `F`<=51 ~ "Homens idosos",
-      TRUE ~ "Classificar"
-    ),
-    
-    # Converter para data/hora corretamente
-    assoc_desde = as_date(ymd_hms(assoc_desde)),  # converte para Date
-    tempo_relacionamento = interval(assoc_desde, ymd("2025-05-31")) / months(1)
   )
-
   
-
-
